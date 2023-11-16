@@ -1,0 +1,497 @@
+Chat history
+ChatGPT
+ChatGPT
+
+Explore
+Today
+Convert PowerShell to JSON
+
+Backup Service Provider Setup
+Detecting Base64 PowerShell Commands
+Malwarebytes CEF Log Decoders
+Reactive IT Support Model
+Yesterday
+Support for Struggling Rugby Player
+Create Wazuh CEF Decoder
+High Expenditure Due to Complexities
+Previous 7 Days
+Privacy Center Information Page
+OpenSearch Wazuh Vulnerabilities Query
+Chisel Sharpening Guide Modules
+New chat
+Grafana JSON Template Conversion
+Create 8 Complex Dashboards
+Thai Cooking Advice
+Grafana Query for Vulnerabilities
+Previous 30 Days
+Azure Dev Center Setup
+Rugby Club Lighting Solution
+Team Commendation and Discipline
+Modify Contract, Remove T&C
+Tarot Training Program Structure
+Grievance Resolution and Communication
+DevOps and Production Separation
+Team Dynamics and Tina
+Security Assessment and Vulnerabilities
+XAMP Docker Security Proposal
+Tina's Behavior and Response
+API Access and Test Accounts
+
+User
+Roger Eales
+
+Close sidebar
+ChatGPT 4
+
+User
+covert this powershell :
+
+Connect-MgGraph -Scope User.Read.All, Directory.Read.All
+Select-MgProfile Beta
+
+Write-Host "Finding registered devices"
+[array]$Devices = Get-MgDevice -All
+If (!($Devices)) { Write-Host "No registered devices found - exiting" ; break }
+Write-Host ("Processing details for {0} devices" -f $Devices.count)
+$Report = [System.Collections.Generic.List[Object]]::new() 
+$i = 0
+ForEach ($Device in $Devices) {
+  $i++
+  Write-Host ("Reporting device {0} ({1}/{2}" -f $Device.DisplayName, $i, $Devices.count)
+  $DeviceOwner = $Null
+  Try {
+    [array]$OwnerIds = Get-MgDeviceRegisteredOwner -DeviceId $Device.Id
+    $DeviceOwner = Get-MgUser -UserId $OwnerIds[0].Id }
+  Catch {}
+
+  $ReportLine = [PSCustomObject][Ordered]@{
+   Device             = $Device.DisplayName
+   Id                 = $Device.Id
+   LastSignIn         = $Device.ApproximateLastSignInDateTime
+   isManaged		  = $Device.isManaged	
+   Owner              = $DeviceOwner.DisplayName
+   OwnerUPN           = $DeviceOwner.UserPrincipalName
+   Department         = $DeviceOwner.Department
+   Office             = $DeviceOwner.OfficeLocation
+   UserGUID           = $DeviceOwner.id
+   City               = $DeviceOwner.City
+   Country            = $DeviceOwner.Country
+   "Operating System" = $Device.OperatingSystem
+   "O/S Version"      = $Device.OperatingSystemVersion
+   Registered         = $Device.RegistrationDateTime
+   "Account Enabled"  = $Device.AccountEnabled
+   DeviceId           = $Device.DeviceId
+   DeviceModel		  = $Device.model
+   DeviceserialNumber = $Device.serialNumber
+   DeviceskuFamily	  = $Device.skuFamily
+   DevicManufact      = $Device.manufacturer
+   TrustType          = $Device.TrustType }
+  $Report.Add($ReportLine)
+
+} #End Foreach Device
+
+# Sort in order of last signed in date
+$Report = $Report | Sort-Object {$_.LastSignIn -as [datetime]} -Descending
+
+
+
+
+
+into json format - here is an exmaple:
+
+{
+  "style": "Table",
+  "Fields": [
+    {
+      "UseExistingInfo": false,
+      "FrontendFields": [
+        {
+          "name": "Password Never Expires",
+          "value": "PasswordNeverExpires",
+          "formatter": "bool"
+        }
+      ],
+      "name": "PasswordNeverExpires",
+      "API": "Graph",
+      "URL": "https://graph.microsoft.com/beta/domains",
+      "ExtractFields": [
+        "passwordValidityPeriodInDays"
+      ],
+      "where": "$_.passwordValidityPeriodInDays -eq 2147483647",
+      "StoreAs": "bool"
+    },
+    {
+      "UseExistingInfo": false,
+      "FrontendFields": [
+        {
+          "name": "OAuth App Consent",
+          "value": "OAuthAppConsent",
+          "formatter": "bool"
+        }
+      ],
+      "name": "OAuthAppConsent",
+      "API": "Graph",
+      "URL": "https://graph.microsoft.com/v1.0/policies/authorizationPolicy?$select=defaultUserRolePermissions",
+      "ExtractFields": [
+        "defaultuserrolepermissions"
+      ],
+      "where": "'ManagePermissionGrantsForSelf.microsoft-user-default-legacy' -notin $_.defaultuserrolepermissions.permissionGrantPoliciesAssigned",
+      "StoreAs": "bool"
+    },
+    {
+      "UseExistingInfo": false,
+      "FrontendFields": [
+        {
+          "name": "Unified Audit Log",
+          "value": "UnifiedAuditLog",
+          "formatter": "bool"
+        }
+      ],
+      "name": "UnifiedAuditLog",
+      "API": "Exchange",
+      "Command": "Get-AdminAuditLogConfig",
+      "ExtractFields": [
+        "UnifiedAuditLogIngestionEnabled"
+      ],
+      "StoreAs": "bool"
+    },
+    {
+      "UseExistingInfo": false,
+      "FrontendFields": [
+        {
+          "name": "MFA Registration Campaign Enabled",
+          "value": "MFANudgeState",
+          "formatter": "bool"
+        }
+      ],
+      "name": "MFANudgeState",
+      "API": "Graph",
+      "URL": "https://graph.microsoft.com/beta/policies/authenticationMethodsPolicy",
+      "ExtractFields": [
+        "registrationEnforcement"
+      ],
+      "StoreAs": "bool",
+      "where": "$_.registrationEnforcement.authenticationMethodsRegistrationCampaign.state -eq 'Enabled'"
+    },
+    {
+      "UseExistingInfo": false,
+      "FrontendFields": [
+        {
+          "name": "Temporary Access Pass Enabled",
+          "value": "TAPEnabled",
+          "formatter": "bool"
+        }
+      ],
+      "name": "TAPEnabled",
+      "API": "Graph",
+      "URL": "https://graph.microsoft.com/beta/policies/authenticationmethodspolicy/authenticationMethodConfigurations/TemporaryAccessPass",
+      "ExtractFields": [
+        "State"
+      ],
+      "StoreAs": "bool"
+    },
+    {
+      "UseExistingInfo": false,
+      "FrontendFields": [
+        {
+          "name": "Secure Defaults State Enabled",
+          "value": "SecureDefaultState",
+          "formatter": "warnBool"
+        }
+      ],
+      "name": "SecureDefaultState",
+      "API": "Graph",
+      "URL": "https://graph.microsoft.com/beta/policies/identitySecurityDefaultsEnforcementPolicy",
+      "ExtractFields": [
+        "IsEnabled"
+      ],
+      "StoreAs": "bool"
+    },
+    {
+      "UseExistingInfo": false,
+      "FrontendFields": [
+        {
+          "name": "Anonymous Privacy Reports",
+          "value": "AnonymousPrivacyReports",
+          "formatter": "reverseBool"
+        }
+      ],
+      "name": "AnonymousPrivacyReports",
+      "API": "Graph",
+      "URL": "https://graph.microsoft.com/beta/admin/reportSettings",
+      "ExtractFields": [
+        "displayConcealedNames"
+      ],
+      "StoreAs": "bool",
+      "where": "$_.displayConcealedNames -eq $false"
+    },
+    {
+      "UseExistingInfo": false,
+      "FrontendFields": [
+        {
+          "name": "Message Copy for Sent-As Disabled",
+          "formatter": "table",
+          "value": "MessageCopyforSentAsDisabled"
+        }
+      ],
+      "name": "MessageCopyforSentAsDisabled",
+      "API": "Exchange",
+      "Command": "Get-Mailbox",
+      "Parameters": {
+        "RecipientTypeDetails": [
+          "SharedMailbox",
+          "UserMailbox"
+        ]
+      },
+      "where": "$_.MessageCopyForSentAsEnabled -eq $false",
+      "ExtractFields": [
+        "userprincipalname",
+        "messageCopyForSentAsEnabled"
+      ],
+      "StoreAs": "JSON"
+    },
+    {
+      "UseExistingInfo": false,
+      "FrontendFields": [
+        {
+          "name": "Shared Mailboxes with enabled users",
+          "formatter": "table",
+          "value": "SharedMailboxeswithenabledusers"
+        }
+      ],
+      "name": "SharedMailboxeswithenabledusers",
+      "API": "Exchange",
+      "Command": "Get-Mailbox",
+      "Parameters": {
+        "RecipientTypeDetails": "SharedMailbox"
+      },
+      "where": "$_.accountDisabled -eq $false",
+      "ExtractFields": [
+        "userprincipalname",
+        "accountDisabled"
+      ],
+      "StoreAs": "JSON"
+    },
+    {
+      "UseExistingInfo": false,
+      "FrontendFields": [
+        {
+          "name": "Unused licenses",
+          "formatter": "table",
+          "value": "Unusedlicenses"
+        }
+      ],
+      "name": "Unusedlicenses",
+      "API": "CIPPFunction",
+      "Command": "Get-CIPPLicenseOverview",
+      "ExtractFields": [
+        "License",
+        "TotalLicenses",
+        "availableUnits",
+        "CountUsed"
+      ],
+      "StoreAs": "JSON",
+      "where": "$_.availableUnits -gt 0"
+    },
+    {
+      "UseExistingInfo": false,
+      "FrontendFields": [
+        {
+          "name": "Current Secure Score",
+          "value": "CurrentSecureScore.currentScore"
+        },
+        {
+          "name": "Max Secure Score",
+          "value": "CurrentSecureScore.maxScore"
+        },
+        {
+          "name": "Average Comparative Score (All Tenants)",
+          "value": "CurrentSecureScore.averageComparativeScores[0].averageScore"
+        },
+        {
+          "name": "Average Comparative Score (Similiar Size Tenants)",
+          "value": "CurrentSecureScore.averageComparativeScores[1].averageScore"
+        }
+      ],
+      "name": "CurrentSecureScore",
+      "API": "Graph",
+      "URL": "https://graph.microsoft.com/beta/security/secureScores?$top=1",
+      "Parameters": {
+        "Nopagination": true
+      },
+      "ExtractFields": [
+        "currentScore",
+        "maxScore",
+        "averageComparativeScores"
+      ],
+      "StoreAs": "JSON"
+    }
+  ],
+  "name": "CIPP Best Practices v1.0 - Table view"
+}
+
+
+
+
+ChatGPT
+To convert the PowerShell script into a JSON format similar to the provided example, we need to map the script's functionalities and the corresponding API calls into a structured JSON object. The PowerShell script focuses on retrieving and processing device information from Microsoft Graph, so the JSON structure will reflect that. Here's a conversion that aligns with the given JSON structure:
+
+json
+Copy code
+{
+  "style": "Table",
+  "Fields": [
+    {
+      "UseExistingInfo": false,
+      "FrontendFields": [
+        {
+          "name": "Device Name",
+          "value": "Device",
+          "formatter": "string"
+        },
+        {
+          "name": "Device ID",
+          "value": "Id",
+          "formatter": "string"
+        },
+        {
+          "name": "Last Sign In",
+          "value": "LastSignIn",
+          "formatter": "datetime"
+        },
+        {
+          "name": "Is Managed",
+          "value": "isManaged",
+          "formatter": "bool"
+        },
+        {
+          "name": "Owner Display Name",
+          "value": "Owner",
+          "formatter": "string"
+        },
+        {
+          "name": "Owner User Principal Name",
+          "value": "OwnerUPN",
+          "formatter": "string"
+        },
+        {
+          "name": "Department",
+          "value": "Department",
+          "formatter": "string"
+        },
+        {
+          "name": "Office Location",
+          "value": "Office",
+          "formatter": "string"
+        },
+        {
+          "name": "User GUID",
+          "value": "UserGUID",
+          "formatter": "string"
+        },
+        {
+          "name": "City",
+          "value": "City",
+          "formatter": "string"
+        },
+        {
+          "name": "Country",
+          "value": "Country",
+          "formatter": "string"
+        },
+        {
+          "name": "Operating System",
+          "value": "Operating System",
+          "formatter": "string"
+        },
+        {
+          "name": "Operating System Version",
+          "value": "O/S Version",
+          "formatter": "string"
+        },
+        {
+          "name": "Registration Date",
+          "value": "Registered",
+          "formatter": "datetime"
+        },
+        {
+          "name": "Account Enabled",
+          "value": "Account Enabled",
+          "formatter": "bool"
+        },
+        {
+          "name": "Device ID",
+          "value": "DeviceId",
+          "formatter": "string"
+        },
+        {
+          "name": "Device Model",
+          "value": "DeviceModel",
+          "formatter": "string"
+        },
+        {
+          "name": "Device Serial Number",
+          "value": "DeviceserialNumber",
+          "formatter": "string"
+        },
+        {
+          "name": "Device SKU Family",
+          "value": "DeviceskuFamily",
+          "formatter": "string"
+        },
+        {
+          "name": "Device Manufacturer",
+          "value": "DevicManufact",
+          "formatter": "string"
+        },
+        {
+          "name": "Trust Type",
+          "value": "TrustType",
+          "formatter": "string"
+        }
+      ],
+      "name": "DeviceInformation",
+      "API": "Graph",
+      "URL": "https://graph.microsoft.com/beta/devices",
+      "ExtractFields": [
+        "displayName",
+        "id",
+        "approximateLastSignInDateTime",
+        "isManaged",
+        "registeredOwners",
+        "department",
+        "officeLocation",
+        "userPrincipalName",
+        "city",
+        "country",
+        "operatingSystem",
+        "operatingSystemVersion",
+        "registrationDateTime",
+        "accountEnabled",
+        "deviceId",
+        "model",
+        "serialNumber",
+        "skuFamily",
+        "manufacturer",
+        "trustType"
+      ],
+      "StoreAs": "JSON"
+    }
+  ],
+  "name": "Device Management Report"
+}
+This JSON structure represents a report that extracts device information from the Microsoft Graph API, similar to what the PowerShell script does. The fields in the "ExtractFields" array correspond to the properties accessed in the PowerShell script. The "URL" field points to the Graph API endpoint used to retrieve device information.
+
+
+
+
+
+
+
+Message ChatGPT…
+
+
+ChatGPT can make mistakes. Consider checking important information.
+
+?
+ChatGPT
