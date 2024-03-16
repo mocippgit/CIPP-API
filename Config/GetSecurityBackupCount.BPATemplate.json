@@ -1,0 +1,21 @@
+{
+  "name": "Get Security-Backup Count ",
+  "style": "Table",
+  "Fields": [
+    {
+      "name": "Groups",
+      "UseExistingInfo": false,
+      "FrontendFields": [
+        {
+          "name": "Number of Users",
+          "value": "@odata.count"
+        }
+      ],
+      "where": "25a4f673-4bcf-4ca5-a3a5-07b3f2b91726/members?$count=true",
+      "ExtractFields": [
+        "@odata.count"
+      ],
+      "URL": "https://graph.microsoft.com/v1.0/groups/"
+    }
+  ]
+}
